@@ -40,12 +40,12 @@ class FullDatasetExporter:
 class DatasetDiffer:
     """Differ of the complete dataset from CV"""
 
-    def __init__(self):
+    def __init__(self, full_dataset):
         self.engine = sqlalchemy.create_engine(config.CORPORA_DATABASE_URL)
         self.corpora_path = config.CORPORA_EXPORT_DIR
+        self.full_dataset = full_dataset
         self.dataframe = None
         self.diff = None
-        self.last_timestamp = None
 
     def load(self):
         """Load the output of the corpora creator to a TSV"""
@@ -60,16 +60,10 @@ class DatasetDiffer:
                 partial_df["timestamp"] = config.TIMESTAMP
             self.dataframe = pandas.concat(self.dataframe, partial_df)
 
-    def get_last_timestamp(self):
-        """Get the latest `timestamp` from corpora database"""
-        metadata = sqlalchemy.MetaData(bind=self.engine, reflect=True)
-        session = sqlalchemy.orm.sessionmaker(bind=self.engine)()
-        return session.query(sqlalchemy.func.max(metadata.tables["timestamp"])).scalar()
-
     def prepare(self):
-        """Filter only rows with `timestamp` greater than the latest timestamp available"""
-        last_timestamp = self.get_last_timestamp()
-        self.diff = self.dataframe[self.dataframe["timestamp"] > last_timestamp]
+        """Filter out entries already exist in a previous version"""
+        current_corpora = pandas.read_sql(config.CORPORA_DATABASE_TABLE, self.engine)
+        self.diff = self.dataframe[~self.dataframe.path.isin(current_corpora.path)]
 
     def write(self):
         """Write `diff` dataframe to the corpora database"""
