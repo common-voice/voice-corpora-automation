@@ -24,10 +24,10 @@ class FullDatasetExporter:
 
     def process_data(self):
         """Preprocess `client_id`, `path`, `sentence`"""
-        hasher = lambda x: hashlib.sha512(x).hexdigest()
-        renamer = lambda x: f"common_voice_{x['locale']}_{x['id']}.mp3"
+        hasher = lambda x: hashlib.sha512(x.encode("utf-8")).hexdigest()
+        renamer = lambda x: f"common_voice_{x.locale}_{x.id}.mp3"
         self.dataframe["client_id"] = self.dataframe["client_id"].apply(hasher)
-        self.dataframe["path"] = self.dataframe.apply(renamer)
+        self.dataframe["path"] = self.dataframe.apply(renamer, axis=1)
         self.dataframe["sentence"] = self.dataframe["sentence"].str.replace("\r", " ")
         self.dataframe.rename(columns={"client_id": "hashed_client_id"})
 
