@@ -23,8 +23,17 @@ setup(
     description="Automation to improve the dataset export process for Common Voice",
     long_description=read("README.rst"),
     packages=find_packages(exclude=("tests",)),
-    install_requires=["boto3", "SQLAlchemy", "pandas", "python-dotenv", "mysqlclient"],
-    dependency_links=["https://github.com/mozilla/CorporaCreator/archive/master.zip"],
+    install_requires=[
+        "boto3",
+        "SQLAlchemy",
+        "pandas",
+        "python-dotenv",
+        "mysqlclient",
+        "corporacreator"
+    ],
+    dependency_links=[
+        "git+https://github.com/mozilla/CorporaCreator.git#egg=corporacreator"
+    ],
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: MIT License",
