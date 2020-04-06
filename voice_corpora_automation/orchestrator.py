@@ -17,7 +17,7 @@ def main():
     cmd = f"create-corpora -d {config.CORPORA_EXPORT_DIR} -f {cv_filename}"
     subprocess.run(cmd, capture_output=True, check=True)
 
-    differ = DatasetDiffer()
+    differ = DatasetDiffer(exporter.dataframe)
     differ.prepare()
     differ.write()
 
