@@ -37,3 +37,6 @@ nosetests.xml
 
 # VS Code
 .vscode/
+
+# Env file
+.env
