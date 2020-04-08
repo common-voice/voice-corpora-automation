@@ -29,7 +29,7 @@ setup(
         "pandas",
         "python-dotenv",
         "mysqlclient",
-        "corporacreator"
+        "corporacreator",
     ],
     dependency_links=[
         "git+https://github.com/mozilla/CorporaCreator.git#egg=corporacreator"
