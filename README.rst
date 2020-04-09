@@ -8,10 +8,11 @@ Usage
 
 Installation
 ------------
-```
-> python setup.py build
-> python setup.py install
-```
+.. code-block:: shell
+
+    $ python setup.py build
+    $ python setup.py install
+
 
 Licence
 -------
