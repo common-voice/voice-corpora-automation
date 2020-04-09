@@ -1,4 +1,5 @@
 """Corpora dataset exporter"""
+import boto3
 import csv
 import hashlib
 import logging
@@ -32,6 +33,7 @@ class FullDatasetExporter:
         LOGGER.info("Processing fields")
         hasher = lambda x: hashlib.sha512(x.encode("utf-8")).hexdigest()
         renamer = lambda x: f"common_voice_{x.locale}_{x.id}.mp3"
+        self.dataframe["cv_path"] = self.dataframe["path"]
         self.dataframe["client_id"] = self.dataframe["client_id"].apply(hasher)
         self.dataframe["path"] = self.dataframe.apply(renamer, axis=1)
         self.dataframe["sentence"] = self.dataframe["sentence"].str.replace("\r", " ")
@@ -41,7 +43,15 @@ class FullDatasetExporter:
         """Export DataFrame to TSV format"""
         LOGGER.info("Store dataset as TSV")
         path = os.path.join(config.CV_EXPORT_DIR, config.CV_EXPORT_FILENAME)
-        self.dataframe.to_csv(path, sep="\t", index=False, quoting=csv.QUOTE_NONE)
+        cols = self.dataframe.columns.remove("cv_path")
+        self.dataframe[cols].to_csv(
+            path,
+            sep="\t",
+            index=False,
+            quoting=csv.QUOTE_NONE,
+            encoding="utf-8",
+            escapechar="\\",
+        )
 
 
 class DatasetDiffer:
@@ -90,3 +100,11 @@ class DatasetDiffer:
         self.diff.to_sql(
             config.CORPORA_DATABASE_TABLE, self.engine, if_exists="append", index=False,
         )
+
+    def sync_s3(self):
+        """Compare the original CV dataset and the diff and sync files in public S3"""
+        s3 = boto3.client("s3")
+        tmp = self.full_dataset(self.full_dataset.path.isin(self.diff.path))
+        for _, entry in tmp.iterrows():
+            src = {"Bucket": config.CV_S3_BUCKET, "Key": entry["cv_path"]}
+            s3.copy_object(src, Bucket=config.CORPORA_S3_BUCKET, Key=entry["cv_path"])

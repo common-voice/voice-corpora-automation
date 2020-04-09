@@ -23,6 +23,7 @@ def main():
     differ.load()
     differ.prepare()
     differ.write()
+    differ.sync_s3()
 
 
 if __name__ == "__main__":
