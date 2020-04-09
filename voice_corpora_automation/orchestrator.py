@@ -5,8 +5,7 @@ import sys
 from corporacreator.tool import run as corporacreator_run
 
 from voice_corpora_automation import config
-from voice_corpora_automation.exporter import (DatasetDiffer,
-                                               FullDatasetExporter)
+from voice_corpora_automation.exporter import DatasetDiffer, FullDatasetExporter
 
 
 def main():
