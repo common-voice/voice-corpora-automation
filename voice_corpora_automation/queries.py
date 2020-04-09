@@ -1,7 +1,6 @@
 """SQL queries for dataset exports"""
 from sqlalchemy import sql
 
-
 RAW_QUERY = """
 SELECT clips.id,
        clips.client_id,

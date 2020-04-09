@@ -1,15 +1,14 @@
 """Corpora dataset exporter"""
-import boto3
 import csv
 import hashlib
 import logging
 import os
 
+import boto3
 import pandas
 import sqlalchemy
 
-from voice_corpora_automation import config
-from voice_corpora_automation import queries
+from voice_corpora_automation import config, queries
 
 LOGGER = logging.getLogger(__name__)
 
