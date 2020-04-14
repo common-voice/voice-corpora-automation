@@ -13,12 +13,12 @@ from voice_corpora_automation import config, queries
 LOGGER = logging.getLogger(__name__)
 
 
-class FullDatasetExporter:
+class DatasetExporter:
     """Exporter of the complete dataset from CV (excluding clips)"""
 
-    def __init__(self):
+    def __init__(self, query=queries.FULL_DATASET_QUERY):
         self.engine = sqlalchemy.create_engine(config.CV_DATABASE_URL, echo=True)
-        self.query = queries.FULL_DATASET_QUERY
+        self.query = query
         self.dataframe = None
 
     def load_data(self):
@@ -38,7 +38,7 @@ class FullDatasetExporter:
         self.dataframe["sentence"] = self.dataframe["sentence"].str.replace("\r", " ")
         self.dataframe.rename(columns={"client_id": "hashed_client_id"})
 
-    def export(self):
+    def export_tsv(self):
         """Export DataFrame to TSV format"""
         LOGGER.info("Store dataset as TSV")
         path = os.path.join(config.CV_EXPORT_DIR, config.CV_EXPORT_FILENAME)
@@ -53,8 +53,8 @@ class FullDatasetExporter:
         )
 
 
-class DatasetDiffer:
-    """Differ of the complete dataset from CV"""
+class DatasetUploader:
+    """Uploader of the complete dataset from CV"""
 
     def __init__(self, full_dataset):
         self.engine = sqlalchemy.create_engine(config.CORPORA_DATABASE_URL)
@@ -93,15 +93,15 @@ class DatasetDiffer:
             LOGGER.info("Something went wrong, falling back to using the whole")
             self.diff = self.dataframe
 
-    def write(self):
-        """Write `diff` dataframe to the corpora database"""
+    def upload(self):
+        """Upload `diff` dataframe to the corpora database"""
         LOGGER.info("Write diff to corpora DB")
         self.diff.to_sql(
             config.CORPORA_DATABASE_TABLE, self.engine, if_exists="append", index=False,
         )
 
     def sync_s3(self):
-        """Compare the original CV dataset and the diff and sync files in public S3"""
+        """Compare the original CV dataset with the diff and sync files in public S3"""
         s3 = boto3.client("s3")
         tmp = self.full_dataset(self.full_dataset.path.isin(self.diff.path))
         for _, entry in tmp.iterrows():
