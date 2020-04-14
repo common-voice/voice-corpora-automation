@@ -23,6 +23,11 @@ setup(
     description="Automation to improve the dataset export process for Common Voice",
     long_description=read("README.rst"),
     packages=find_packages(exclude=("tests",)),
+    entry_points={
+        "console_scripts": [
+            "voice-corpora-automation=voice_corpora_automation.orchestrator:main"
+        ],
+    },
     install_requires=[
         "boto3",
         "SQLAlchemy",

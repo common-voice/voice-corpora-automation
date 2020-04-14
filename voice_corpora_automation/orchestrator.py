@@ -24,7 +24,3 @@ def main():
     uploader.prepare()
     uploader.upload()
     uploader.sync_s3()
-
-
-if __name__ == "__main__":
-    main()
