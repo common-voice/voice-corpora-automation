@@ -13,7 +13,8 @@ def main():
     exporter = DatasetExporter()
     exporter.load_data()
     exporter.process_data()
-    exporter.export_tsv()
+    exporter.prepare_diff()
+    exporter.export_diff()
 
     cv_filename = os.path.join(config.CV_EXPORT_DIR, config.CV_EXPORT_FILENAME)
     sys.argv = ["corpora-creator", "-f", cv_filename, "-d", config.CORPORA_EXPORT_DIR]
@@ -21,6 +22,5 @@ def main():
 
     uploader = DatasetUploader(exporter.dataframe)
     uploader.load()
-    uploader.prepare()
     uploader.upload()
     uploader.sync_s3()
