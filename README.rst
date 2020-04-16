@@ -23,19 +23,19 @@ Configuration
 Env vars
 
 * CV_DATABASE_URL
-  * Common voice read-only replica
+    * Common voice read-only replica
 * CV_EXPORT_DIR
-  * Path to store the clips tsv
+    * Path to store the clips tsv
 * CV_S3_BUCKET
-  * CV clips S3 bucket
+    * CV clips S3 bucket
 * CORPORA_EXPORT_DIR
-  * Path to store the corpora tsv
+    * Path to store the corpora tsv
 * CORPORA_DATABASE_URL
-  * Path to the corpora database
+    * Path to the corpora database
 * CORPORA_DATABASE_TABLE
-  * Corpora database table
+    * Corpora database table
 * CORPORA_S3_BUCKET
-  * S3 bucket to store the public clips
+    * S3 bucket to store the public clips
 
 Licence
 -------
