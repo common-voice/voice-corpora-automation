@@ -59,7 +59,7 @@ class DatasetExporter:
         """Export diff to TSV format"""
         LOGGER.info("Store dataset as TSV")
         path = os.path.join(config.CV_EXPORT_DIR, config.CV_EXPORT_FILENAME)
-        cols = self.diff.columns.remove("cv_path")
+        cols = [col for col in self.diff.columns if col != "cv_path"]
         self.diff[cols].to_csv(
             path,
             sep="\t",
@@ -106,12 +106,13 @@ class DatasetUploader:
     def sync_s3(self):
         """Compare the original CV dataset with the diff and sync files in public S3"""
         s3_client = boto3.client("s3")
-        tmp = self.original_dataset(
+        tmp = self.original_dataset[
             self.original_dataset.path.isin(self.dataframe.path)
-        )
+        ]
         LOGGER.info("Syncing files to s3")
+
         for _, entry in tmp.iterrows():
             src = {"Bucket": config.CV_S3_BUCKET, "Key": entry["cv_path"]}
             s3_client.copy_object(
-                src, Bucket=config.CORPORA_S3_BUCKET, Key=entry["cv_path"]
+                CopySource=src, Bucket=config.CORPORA_S3_BUCKET, Key=entry["path"]
             )
