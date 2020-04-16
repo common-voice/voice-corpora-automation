@@ -20,7 +20,7 @@ Installation
 Configuration
 -------------
 
-Env vars
+Environment variables
 
 * CV_DATABASE_URL
     * Common voice read-only replica
