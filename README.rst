@@ -5,6 +5,10 @@ Automation to improve the dataset export process for Common Voice
 
 Usage
 -----
+.. code-block:: shell
+
+    $ voice-corpora-automation
+
 
 Installation
 ------------
