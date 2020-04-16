@@ -10,6 +10,7 @@ import sqlalchemy
 
 from voice_corpora_automation import config, queries
 
+logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
